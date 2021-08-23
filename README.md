@@ -1,5 +1,5 @@
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/flopp/go-findfont)](https://pkg.go.dev/github.com/flopp/go-findfont)
-[![Go Report Card](http://goreportcard.com/badge/flopp/go-findfont)](http://goreportcard.com/report/flopp/go-findfont)
+[![Go Report Card](https://goreportcard.com/badge/github.com/flopp/go-findfont)](https://goreportcard.com/report/github.com/flopp/go-findfont)
 [![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/flopp/go-findfont/)
 
 # go-findfont
