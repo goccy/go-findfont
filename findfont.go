@@ -14,11 +14,7 @@ import (
 )
 
 func defaultSuffixes() []string {
-	suffixes := make([]string, 0, 3)
-	suffixes = append(suffixes, ".ttf")
-	suffixes = append(suffixes, ".ttc")
-	suffixes = append(suffixes, ".otf")
-	return suffixes
+	return []string{".ttf", ".ttc", ".otf"}
 }
 
 // Find tries to locate the specified font file in the current directory as

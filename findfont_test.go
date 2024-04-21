@@ -14,19 +14,15 @@ func TestList(t *testing.T) {
 	}
 
 	// ListWithSuffix using bad suffix
-	bad_suffixes := make([]string, 0, 1)
-	bad_suffixes = append(bad_suffixes, ".bad-suffix")
-	bad_suffix_fonts := ListWithSuffixes(bad_suffixes)
+	bad_suffix_fonts := ListWithSuffixes([]string{".bad-suffix"})
 	if len(bad_suffix_fonts) != 0 {
 		t.Errorf("Unexpectedly found font files with bad suffix, e.g. %s", bad_suffix_fonts[0])
 	}
 
 	// ListWithSuffixes using good suffix
-	good_suffixes := make([]string, 0, 1)
-	good_suffixes = append(good_suffixes, filepath.Ext(fonts[0]))
-	good_suffix_fonts := ListWithSuffixes(good_suffixes)
+	good_suffix_fonts := ListWithSuffixes([]string{filepath.Ext(fonts[0])})
 	if len(good_suffix_fonts) == 0 {
-		t.Errorf("No font files with suffix %s", good_suffixes[0])
+		t.Errorf("No font files with suffix %s", filepath.Ext(fonts[0]))
 	}
 }
 
