@@ -12,6 +12,22 @@ func TestList(t *testing.T) {
 	if len(fonts) == 0 {
 		t.Errorf("No font files found in system folders")
 	}
+
+	// ListWithSuffix using bad suffix
+	bad_suffixes := make([]string, 0, 1)
+	bad_suffixes = append(bad_suffixes, ".bad-suffix")
+	bad_suffix_fonts := ListWithSuffixes(bad_suffixes)
+	if len(bad_suffix_fonts) != 0 {
+		t.Errorf("Unexpectedly found font files with bad suffix, e.g. %s", bad_suffix_fonts[0])
+	}
+
+	// ListWithSuffixes using good suffix
+	good_suffixes := make([]string, 0, 1)
+	good_suffixes = append(good_suffixes, filepath.Ext(fonts[0]))
+	good_suffix_fonts := ListWithSuffixes(good_suffixes)
+	if len(good_suffix_fonts) == 0 {
+		t.Errorf("No font files with suffix %s", good_suffixes[0])
+	}
 }
 
 func TestFind(t *testing.T) {

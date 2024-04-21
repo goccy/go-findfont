@@ -13,26 +13,46 @@ import (
 	"strings"
 )
 
+func defaultSuffixes() []string {
+	suffixes := make([]string, 0, 3)
+	suffixes = append(suffixes, ".ttf")
+	suffixes = append(suffixes, ".ttc")
+	suffixes = append(suffixes, ".otf")
+	return suffixes
+}
+
 // Find tries to locate the specified font file in the current directory as
 // well as in platform specific user and system font directories; if there is
-// no exact match, Find tries substring matching.
+// no exact match, Find tries substring matching - files with the standard font suffixes (.ttf, .ttc, .otf) are considered.
 func Find(fileName string) (filePath string, err error) {
+	return FindWithSuffixes(fileName, defaultSuffixes())
+}
+
+// FindWithSuffixes tries to locate the specified font file in the current directory as
+// well as in platform specific user and system font directories; if there is
+// no exact match, Find tries substring matching - only font files with the give suffixes are considered.
+func FindWithSuffixes(fileName string, suffixes []string) (filePath string, err error) {
 	// check if fileName already points to a readable file
 	if _, err := os.Stat(fileName); err == nil {
 		return fileName, nil
 	}
 
 	// search in user and system directories
-	return find(filepath.Base(fileName))
+	return find(filepath.Base(fileName), suffixes)
 }
 
-// List returns a list of all font files found on the system.
+// List returns a list of all font files (determined by standard suffixes: .ttf, .ttc, .otf) found on the system.
 func List() (filePaths []string) {
+	return ListWithSuffixes(defaultSuffixes())
+}
+
+// ListWithSuffixes returns a list of all font files (determined by given file suffixes) found on the system.
+func ListWithSuffixes(suffixes []string) (filePaths []string) {
 	pathList := []string{}
 
 	walkF := func(path string, info os.FileInfo, err error) error {
 		if err == nil {
-			if !info.IsDir() && isFontFile(path) {
+			if !info.IsDir() && isFontFile(path, suffixes) {
 				pathList = append(pathList, path)
 			}
 		}
@@ -45,9 +65,14 @@ func List() (filePaths []string) {
 	return pathList
 }
 
-func isFontFile(fileName string) bool {
+func isFontFile(fileName string, suffixes []string) bool {
 	lower := strings.ToLower(fileName)
-	return strings.HasSuffix(lower, ".ttf") || strings.HasSuffix(lower, ".ttc") || strings.HasSuffix(lower, ".otf")
+	for _, suffix := range suffixes {
+		if strings.HasSuffix(lower, suffix) {
+			return true
+		}
+	}
+	return false
 }
 
 func stripExtension(fileName string) string {
@@ -63,7 +88,7 @@ func expandUser(path string) (expandedPath string) {
 	return path
 }
 
-func find(needle string) (filePath string, err error) {
+func find(needle string, suffixes []string) (filePath string, err error) {
 	lowerNeedle := strings.ToLower(needle)
 	lowerNeedleBase := stripExtension(lowerNeedle)
 
@@ -82,7 +107,7 @@ func find(needle string) (filePath string, err error) {
 
 		lowerPath := strings.ToLower(info.Name())
 
-		if !info.IsDir() && isFontFile(lowerPath) {
+		if !info.IsDir() && isFontFile(lowerPath, suffixes) {
 			lowerBase := stripExtension(lowerPath)
 			if lowerPath == lowerNeedle {
 				// exact match
