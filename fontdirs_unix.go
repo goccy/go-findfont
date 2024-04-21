@@ -1,4 +1,4 @@
-// +build dragonfly freebsd linux nacl netbsd openbsd solaris
+//go:build unix && !darwin
 
 // Copyright 2016 Florian Pigorsch. All rights reserved.
 //
@@ -10,12 +10,18 @@ package findfont
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 func getFontDirectories() (paths []string) {
-	directories := getUserFontDirs()
-	directories = append(directories, getSystemFontDirs()...)
-	return directories
+	switch runtime.GOOS {
+	case "android":
+		return []string{"/system/fonts"}
+	default:
+		directories := getUserFontDirs()
+		directories = append(directories, getSystemFontDirs()...)
+		return directories
+	}
 }
 
 func getUserFontDirs() (paths []string) {
